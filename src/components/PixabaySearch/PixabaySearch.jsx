@@ -8,7 +8,6 @@ export const PixabaySearch = ({ onSubmit }) => {
     actions.setSubmitting(false);
     actions.resetForm();
   };
-
   return (
     <Formik initialValues={{ query: '' }} onSubmit={handleSubmit}>
       {({ isSubmitting }) => (

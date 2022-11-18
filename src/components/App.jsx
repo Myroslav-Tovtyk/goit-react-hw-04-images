@@ -18,34 +18,12 @@ export const App = () => {
   const [modalActive, setModalActive] = useState(false);
   const [totalHits, setTotalHits] = useState(0);
 
-  useEffect(() => {
-    fetchData();
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-        const response = await PixabayPictures(q, page);
-        setTotalHits(response.totalHits);
-
-        if (response.hits.length === 0) {
-          return toast.error('No match');
-        }
-        setPictures(prev => [...prev, response.hits]);
-        console.log(response.hits);
-      } catch (error) {
-        return toast.error('Something goes wrong...');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  }, [q, page]);
-
   const getPics = async values => {
     if (values.query === '') {
       return toast.warning('Please, enter Your search query');
     }
     try {
       setQuery(values.query);
-      console.log(values.query);
       setPictures([]);
       setIsLoading(true);
       setPage(1);
@@ -55,6 +33,29 @@ export const App = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!q) {
+      return;
+    }
+    fetchData();
+    async function fetchData() {
+      setIsLoading(true);
+      try {
+        const response = await PixabayPictures(q, page);
+        setTotalHits(response.totalHits);
+
+        if (response.hits.length === 0) {
+          return toast.error('No match');
+        }
+        setPictures(prev => [...prev, ...response.hits]);
+      } catch (error) {
+        return toast.error('Something goes wrong...');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [q, page]);
 
   const toggleModal = () => {
     setModalActive(prev => !prev);
